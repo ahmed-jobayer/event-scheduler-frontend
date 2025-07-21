@@ -16,6 +16,7 @@ interface AddEventModalProps {
   fetchEvents: () => void;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const AddEventModal = ({ setShowForm, fetchEvents }: AddEventModalProps) => {
   const [submitting, setSubmitting] = useState(false);
 
@@ -27,7 +28,7 @@ const AddEventModal = ({ setShowForm, fetchEvents }: AddEventModalProps) => {
   } = useForm<FormData>({
     defaultValues: {
       title: "",
-      date: "",
+      date: "", 
       time: "",
       notes: "",
     },

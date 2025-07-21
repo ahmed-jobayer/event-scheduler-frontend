@@ -6,6 +6,7 @@ import NoEvent from "./components/NoEvent";
 import EventCard from "./components/EventCard";
 import Loading from "./components/Loading";
 import AddEventModal from "./components/AddEventModal";
+import Swal from "sweetalert2";
 
 function App() {
   const [events, setEvents] = useState<IEvent[]>([]);
@@ -46,6 +47,40 @@ function App() {
     fetchEvents();
   }, []);
 
+  // archive event
+
+  const handleArchiveEvent = async (id: string) => {
+    Swal.fire({
+      title: "Do you want to archive this event?",
+      showDenyButton: true,
+      confirmButtonText: "Archive",
+      denyButtonText: `Cancel`,
+    }).then(async (result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        const res = await axios.put(
+          `http://localhost:5000/api/v1/events/${id}`
+        );
+        // console.log(res);
+        if (res.data.success) {
+          Swal.fire({
+            title: "Event archived successfully",
+            icon: "success",
+            timer: 2000,
+          });
+          // refetch the fresh data
+          fetchEvents()
+        }
+      } else if (result.isDenied) {
+        Swal.fire({
+          title: "Not archived",
+          icon: "error",
+          timer: 1000,
+        });
+      }
+    });
+  };
+
   // loading animation
 
   if (loading) {
@@ -83,7 +118,12 @@ function App() {
           ) : (
             <div className="space-y-4">
               {events.map((event, i) => (
-                <EventCard key={i} event={event} isArchived={false} />
+                <EventCard
+                  key={i}
+                  event={event}
+                  isArchived={false}
+                  handleArchiveEvent={handleArchiveEvent}
+                />
               ))}
             </div>
           )}
@@ -109,7 +149,9 @@ function App() {
       </main>
 
       {/* Add Event Modal */}
-      {showForm && <AddEventModal setShowForm={setShowForm}  fetchEvents={fetchEvents}/>}
+      {showForm && (
+        <AddEventModal setShowForm={setShowForm} fetchEvents={fetchEvents} />
+      )}
     </div>
   );
 }

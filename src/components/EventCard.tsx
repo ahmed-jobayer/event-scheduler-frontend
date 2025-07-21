@@ -4,9 +4,11 @@ import type { IEvent, TCategory } from "../types/Event";
 const EventCard = ({
   event,
   isArchived = false,
+  handleArchiveEvent
 }: {
   event: IEvent;
   isArchived?: boolean;
+  handleArchiveEvent? : (id: string) => void;
 }) => {
   const getCategoryColor = (category: TCategory) => {
     switch (category) {
@@ -80,16 +82,15 @@ const EventCard = ({
         </div>
 
         <div className="flex items-center gap-2">
-          <button
-            className={`p-2 rounded-lg transition-colors ${
-              isArchived
-                ? "text-gray-400 hover:text-blue-500 hover:bg-blue-50"
-                : "text-gray-500 hover:text-blue-600 hover:bg-blue-50"
-            }`}
-            title={isArchived ? "Unarchive event" : "Archive event"}
-          >
-            <Archive size={18} />
-          </button>
+          {!isArchived && (
+            <button
+              className="p-2 rounded-lg transition-colors text-gray-400 hover:text-blue-500 hover:bg-blue-50"
+              title={"Archive event"}
+              onClick={() => handleArchiveEvent?.(event._id)}
+            >
+              <Archive size={18} />
+            </button>
+          )}
           <button
             className={`p-2 rounded-lg transition-colors ${
               isArchived

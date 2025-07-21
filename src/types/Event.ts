@@ -1,7 +1,7 @@
 export type TCategory = 'Work' | 'Personal' | 'Other';
 
 export interface IEvent {
-  _id?: string;
+  _id: string;
   title: string;
   date: string;
   time: string;
