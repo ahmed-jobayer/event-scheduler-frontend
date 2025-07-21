@@ -4,11 +4,13 @@ import type { IEvent, TCategory } from "../types/Event";
 const EventCard = ({
   event,
   isArchived = false,
-  handleArchiveEvent
+  handleArchiveEvent,
+  handleDeleteEvent,
 }: {
   event: IEvent;
   isArchived?: boolean;
-  handleArchiveEvent? : (id: string) => void;
+  handleArchiveEvent?: (id: string) => void;
+  handleDeleteEvent?: (id: string) => void;
 }) => {
   const getCategoryColor = (category: TCategory) => {
     switch (category) {
@@ -98,6 +100,7 @@ const EventCard = ({
                 : "text-gray-500 hover:text-red-600 hover:bg-red-50"
             }`}
             title="Delete event"
+            onClick={() => handleDeleteEvent?.(event._id)}
           >
             <Trash2 size={18} />
           </button>

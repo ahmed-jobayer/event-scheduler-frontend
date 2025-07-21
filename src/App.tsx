@@ -69,11 +69,44 @@ function App() {
             timer: 2000,
           });
           // refetch the fresh data
-          fetchEvents()
+          fetchEvents();
         }
       } else if (result.isDenied) {
         Swal.fire({
           title: "Not archived",
+          icon: "error",
+          timer: 1000,
+        });
+      }
+    });
+  };
+  // delete event
+
+  const handleDeleteEvent = async (id: string) => {
+    Swal.fire({
+      title: "Do you want to delete this event?",
+      showDenyButton: true,
+      confirmButtonText: "Delete",
+      denyButtonText: `Cancel`,
+    }).then(async (result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        const res = await axios.delete(
+          `http://localhost:5000/api/v1/events/${id}`
+        );
+        console.log(res);
+        if (res.data.success) {
+          Swal.fire({
+            title: "Event deleted successfully",
+            icon: "success",
+            timer: 2000,
+          });
+          // refetch the fresh data
+          fetchEvents();
+        }
+      } else if (result.isDenied) {
+        Swal.fire({
+          title: "Not deleted",
           icon: "error",
           timer: 1000,
         });
@@ -123,6 +156,7 @@ function App() {
                   event={event}
                   isArchived={false}
                   handleArchiveEvent={handleArchiveEvent}
+                  handleDeleteEvent={handleDeleteEvent}
                 />
               ))}
             </div>
@@ -141,7 +175,12 @@ function App() {
           ) : (
             <div className="space-y-4">
               {archivedEvents.map((event, i) => (
-                <EventCard key={i} event={event} isArchived={true} />
+                <EventCard
+                  key={i}
+                  event={event}
+                  isArchived={true}
+                  handleDeleteEvent={handleDeleteEvent}
+                />
               ))}
             </div>
           )}
