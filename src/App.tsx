@@ -11,18 +11,21 @@ import Swal from "sweetalert2";
 function App() {
   const [events, setEvents] = useState<IEvent[]>([]);
   const [archivedEvents, setArchivedEvents] = useState<IEvent[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [showForm, setShowForm] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<"upcomming" | "archived">(
+    "upcomming"
+  );
 
-  console.log({ events });
-  console.log({ archivedEvents });
 
   // event fetching function
 
   const fetchEvents = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("http://localhost:5000/api/v1/events");
+      const res = await axios.get(
+        "https://event-scheduler-backend-puce.vercel.app/api/v1/events"
+      );
       const allEvents: IEvent[] = res.data.data;
 
       // /seperate events by archived status
@@ -59,7 +62,7 @@ function App() {
       /* Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
         const res = await axios.put(
-          `http://localhost:5000/api/v1/events/${id}`
+          `https://event-scheduler-backend-puce.vercel.app/api/v1/events/${id}`
         );
         // console.log(res);
         if (res.data.success) {
@@ -92,9 +95,9 @@ function App() {
       /* Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
         const res = await axios.delete(
-          `http://localhost:5000/api/v1/events/${id}`
+          `https://event-scheduler-backend-puce.vercel.app/api/v1/events/${id}`
         );
-        console.log(res);
+        // console.log(res);
         if (res.data.success) {
           Swal.fire({
             title: "Event deleted successfully",
@@ -141,50 +144,67 @@ function App() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-8">
-        {/* Active Events */}
-        <section className="mb-12">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">
+        <div className="flex gap-4 mb-6">
+          <button
+            onClick={() => setActiveTab("upcomming")}
+            className={`text-xl cursor-pointer font-semibold pb-1  ${
+              activeTab === "upcomming" &&
+              "border-b-2 border-blue-400 text-blue-600"
+            }`}
+          >
             Upcoming Events
-          </h2>
-          {events?.length < 1 ? (
-            <NoEvent />
-          ) : (
-            <div className="space-y-4">
-              {events.map((event, i) => (
-                <EventCard
-                  key={i}
-                  event={event}
-                  isArchived={false}
-                  handleArchiveEvent={handleArchiveEvent}
-                  handleDeleteEvent={handleDeleteEvent}
-                />
-              ))}
-            </div>
-          )}
-        </section>
+          </button>
+          <button
+            onClick={() => setActiveTab("archived")}
+            className={`text-xl cursor-pointer font-semibold  pb-1 ${
+              activeTab === "archived" &&
+              "border-b-2 border-blue-400 text-blue-600"
+            }`}
+          >
+            Archived Events
+          </button>
+        </div>
+
+        {/* Active Events */}
+        {activeTab === "upcomming" && (
+          <section className="mb-12">
+            {events?.length < 1 ? (
+              <NoEvent />
+            ) : (
+              <div className="space-y-4">
+                {events.map((event, i) => (
+                  <EventCard
+                    key={i}
+                    event={event}
+                    isArchived={false}
+                    handleArchiveEvent={handleArchiveEvent}
+                    handleDeleteEvent={handleDeleteEvent}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
+        )}
 
         {/* Archived Events */}
-
-        <section>
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">
-            Archived Events
-          </h2>
-
-          {archivedEvents?.length < 1 ? (
-            <NoEvent />
-          ) : (
-            <div className="space-y-4">
-              {archivedEvents.map((event, i) => (
-                <EventCard
-                  key={i}
-                  event={event}
-                  isArchived={true}
-                  handleDeleteEvent={handleDeleteEvent}
-                />
-              ))}
-            </div>
-          )}
-        </section>
+        {activeTab === "archived" && (
+          <section>
+            {archivedEvents?.length < 1 ? (
+              <NoEvent />
+            ) : (
+              <div className="space-y-4">
+                {archivedEvents.map((event, i) => (
+                  <EventCard
+                    key={i}
+                    event={event}
+                    isArchived={true}
+                    handleDeleteEvent={handleDeleteEvent}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
+        )}
       </main>
 
       {/* Add Event Modal */}

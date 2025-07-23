@@ -39,12 +39,12 @@ const AddEventModal = ({ setShowForm, fetchEvents }: AddEventModalProps) => {
       setSubmitting(true);
 
       // Your API call logic here
-      console.log("Form data:", data);
+      // console.log("Form data:", data);
 
       // Example API call:
-      const res = await axios.post("http://localhost:5000/api/v1/events", data);
+      const res = await axios.post("https://event-scheduler-backend-puce.vercel.app/api/v1/events", data);
 
-      console.log(res);
+      // console.log(res);
 
       if (res.data.success) {
         Swal.fire({
